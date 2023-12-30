@@ -97,7 +97,7 @@
 // Only require a nightly compiler when building documentation for docs.rs.
 // This is a private option that should not be used.
 // https://github.com/rust-lang/docs.rs/issues/147#issuecomment-389544407
-#![cfg_attr(attr_alias_docs_rs, feature(doc_cfg))]
+#![cfg_attr(feature = "nightly", feature(doc_cfg))]
 #![cfg_attr(feature = "nightly", feature(track_path))]
 #![forbid(unsafe_code)]
 #![warn(unused_results)]
@@ -259,6 +259,8 @@ fn eval_item(item: TokenStream, resolved: &mut bool) -> Result<TokenStream> {
 /// *Compiled using the [example alias file].*
 ///
 /// ```
+/// # #![cfg_attr(feature = "nightly", feature(doc_cfg))]
+/// #
 /// use std::process::Command;
 ///
 /// use attr_alias::attr_alias;
@@ -268,7 +270,7 @@ fn eval_item(item: TokenStream, resolved: &mut bool) -> Result<TokenStream> {
 /// impl ProcessBuilder {
 ///     #[attr_alias(macos_or_windows)]
 #[cfg_attr(
-    attr_alias_docs_rs,
+    feature = "nightly",
     doc = "    #[attr_alias(macos_or_windows, doc(cfg(*)))]"
 )]
 ///     fn name(&mut self, name: &str) -> &mut Self {
@@ -280,7 +282,7 @@ fn eval_item(item: TokenStream, resolved: &mut bool) -> Result<TokenStream> {
 /// [example alias file]: self#example
 /// [Rust identifier]: https://doc.rust-lang.org/reference/identifiers.html
 #[cfg(feature = "nightly")]
-#[cfg_attr(attr_alias_docs_rs, doc(cfg(feature = "nightly")))]
+#[cfg_attr(feature = "nightly", doc(cfg(feature = "nightly")))]
 #[proc_macro_attribute]
 pub fn attr_alias(args: TokenStream, item: TokenStream) -> TokenStream {
     tracked_path::path(Aliases::FILE);
@@ -376,6 +378,8 @@ pub fn eval_block(item: TokenStream) -> TokenStream {
 /// **Conditionally Defining a Method:**
 ///
 /// ```
+/// # #![cfg_attr(feature = "nightly", feature(doc_cfg))]
+/// #
 /// use std::process::Command;
 ///
 /// struct ProcessBuilder(Command);
@@ -384,7 +388,7 @@ pub fn eval_block(item: TokenStream) -> TokenStream {
 /// impl ProcessBuilder {
 ///     #[attr_alias(macos_or_windows)]
 #[cfg_attr(
-    attr_alias_docs_rs,
+    feature = "nightly",
     doc = "    #[attr_alias(macos_or_windows, doc(cfg(*)))]"
 )]
 ///     fn name(&mut self, name: &str) -> &mut Self {
