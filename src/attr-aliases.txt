@@ -1,0 +1,5 @@
+*default=cfg(*)
+*macos=target_os = "macos"
+*macos_or_windows=attr_alias(macos, any(*, windows))
+// Comments are supported.
+*warnings=warn(missing_docs, unused_results)

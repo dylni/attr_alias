@@ -1,0 +1,9 @@
+[package]
+name = "dependent"
+version = "0.0.1"
+authors = ["dylni"]
+edition = "2021"
+publish = false
+
+[dependencies]
+dependency = { path = "../dependency", version = "*" }

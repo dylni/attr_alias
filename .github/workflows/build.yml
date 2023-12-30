@@ -1,0 +1,34 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+  schedule:
+  - cron: 0 0 * * FRI
+
+jobs:
+  build:
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: dylni/build-actions/build@master
+      with:
+        nightly-features: 'nightly'
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, windows-latest]
+  test:
+    needs: [build]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: dylni/build-actions/test@master
+      with:
+        nightly-features: 'nightly'
+        version: ${{ matrix.version }}
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        platform: [macos-latest, ubuntu-latest, windows-latest]
+        version: [1.70.0, stable, beta, nightly]
