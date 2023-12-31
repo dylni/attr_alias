@@ -2,7 +2,7 @@
 
 This crate allows defining arbitrary aliases for attributes.
 
-[![GitHub Build Status](https://github.com/dylni/attr_alias/workflows/build/badge.svg?branch=master)](https://github.com/dylni/attr_alias/actions?query=branch%3Amaster)
+[![GitHub Build Status](https://github.com/dylni/attr_alias/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/dylni/attr_alias/actions/workflows/build.yml?query=branch%3Amaster)
 
 ## Usage
 
