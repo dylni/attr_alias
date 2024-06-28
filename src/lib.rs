@@ -121,6 +121,7 @@ macro_rules! alias_file {
         "src/attr-aliases.txt"
     };
 }
+use alias_file;
 
 macro_rules! tokens {
     ( $($token:expr ,)+ ) => {{
