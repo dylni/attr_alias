@@ -1,7 +1,7 @@
 //! This crate allows defining arbitrary aliases for attributes.
 //!
 //! Aliases are resolved by [`#[attr_alias]`][macro@attr_alias]. Since that
-//! attribute requires a nightly compliler, [`#[eval]`][macro@eval] and
+//! attribute requires a nightly compiler, [`#[eval]`][macro@eval] and
 //! [`eval_block!`] provide workarounds for use on the stable release channel.
 //!
 //! # Alias File
@@ -14,8 +14,7 @@
 //!
 //! ## Syntax
 //!
-//! - Each alias must begin with `*` and be assigned to a valid attribute
-//!   value.
+//! - Each alias must begin with `*` and be assigned a valid attribute value.
 //! - Aliases can reference others, but referenced aliases must be listed
 //!   first.
 //!
@@ -226,7 +225,7 @@ fn eval_item(item: TokenStream, resolved: &mut bool) -> Result<TokenStream> {
                     *resolved |= Aliases::get()?.resolve(&mut stream)?;
                 } else {
                     stream = eval_item(stream, resolved)?;
-                };
+                }
                 *group = Group::new(delimiter, stream);
             }
             attr = matches!(
@@ -260,7 +259,7 @@ fn eval_item(item: TokenStream, resolved: &mut bool) -> Result<TokenStream> {
 /// *Compiled using the [example alias file].*
 ///
 /// ```
-/// # #![cfg_attr(feature = "nightly", feature(doc_cfg))]
+/// # #![feature(doc_cfg)]
 /// #
 /// use std::process::Command;
 ///
@@ -270,10 +269,7 @@ fn eval_item(item: TokenStream, resolved: &mut bool) -> Result<TokenStream> {
 ///
 /// impl ProcessBuilder {
 ///     #[attr_alias(macos_or_windows)]
-#[cfg_attr(
-    feature = "nightly",
-    doc = "    #[attr_alias(macos_or_windows, doc(cfg(*)))]"
-)]
+///     #[attr_alias(macos_or_windows, doc(cfg(*)))]
 ///     fn name(&mut self, name: &str) -> &mut Self {
 ///         unimplemented!();
 ///     }
