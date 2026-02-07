@@ -15,6 +15,7 @@ use proc_macro::TokenTree;
 
 use super::Error;
 use super::Result;
+use super::ResultExt;
 
 macro_rules! next {
     ( $item:expr , $type:ident $(, $method:ident => $value:expr)? $(,)? ) => {
@@ -109,18 +110,22 @@ impl Aliases {
         let _ = OpenOptions::new()
             .read(true)
             .open(Self::FILE)
-            .map_err(|x| Error::new_from(x, "opening alias file"))?
+            .wrap_err("error opening alias file")?
             .read_to_string(&mut aliases)
-            .map_err(|x| Error::new_from(x, "reading alias file"))?;
+            .wrap_err("error reading alias file")?;
 
         let mut parsed_aliases = Self(HashMap::new());
-        let mut aliases = aliases.split("\n*").peekable();
-        let _ = aliases.next_if_eq(&"");
+        let mut aliases = aliases
+            .split("\n*")
+            .map(str::parse::<TokenStream>)
+            .map(|x| x.wrap_err("error parsing alias file"));
+        if let Some(header) = aliases.next() {
+            if !header?.is_empty() {
+                return Err(Error::new("text before aliases in alias file"));
+            }
+        }
         for alias in aliases {
-            let mut alias = alias
-                .parse::<TokenStream>()
-                .map_err(|x| Error::new_from(x, "parsing alias file"))?
-                .into_iter();
+            let mut alias = alias?.into_iter();
             let alias_name = next!(alias, Ident)?;
             let _ = next!(alias, Punct, as_char => '=')?;
             let mut alias = alias.collect();
@@ -146,8 +151,8 @@ impl Aliases {
     }
 
     pub(super) fn create_trigger() -> Result<impl Iterator<Item = TokenTree>> {
-        let mut alias_file = env::current_dir()
-            .map_err(|x| Error::new_from(x, "getting current directory"))?;
+        let mut alias_file =
+            env::current_dir().wrap_err("error getting current directory")?;
         alias_file.push(Self::FILE);
 
         let alias_file = alias_file

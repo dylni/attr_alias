@@ -1,0 +1,9 @@
+// * Comment *
+*true=cfg(all())
+/*
+ * Comment
+ *true=cfg(any())
+ *true=any(
+ * Comment
+ */
+// * Comment *

@@ -1,0 +1,9 @@
+[package]
+name = "complex"
+version = "0.0.1"
+authors = ["dylni"]
+edition = "2021"
+publish = false
+
+[dependencies]
+attr_alias = { path = "../../..", version = "*" }

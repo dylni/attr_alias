@@ -178,16 +178,6 @@ impl Error {
         }
     }
 
-    fn new_from<T>(error: T, message: &'static str) -> Self
-    where
-        T: error::Error,
-    {
-        Self {
-            span: Span::call_site(),
-            message: format!("error {}: {}", message, error),
-        }
-    }
-
     fn token(token: &TokenTree) -> Self {
         Self {
             span: token.span(),
@@ -205,6 +195,24 @@ impl Error {
     }
 }
 
+type Result<T> = result::Result<T, Error>;
+
+trait ResultExt<T> {
+    fn wrap_err(self, message: &str) -> Result<T>;
+}
+
+impl<T, E> ResultExt<T> for result::Result<T, E>
+where
+    E: error::Error,
+{
+    fn wrap_err(self, message: &str) -> Result<T> {
+        self.map_err(|error| Error {
+            span: Span::call_site(),
+            message: format!("{}: {}", message, error),
+        })
+    }
+}
+
 fn parse_empty<I>(tokens: I) -> Result<()>
 where
     I: IntoIterator<Item = TokenTree>,
@@ -215,8 +223,6 @@ where
         .map(|x| Err(Error::token(&x)))
         .unwrap_or(Ok(()))
 }
-
-type Result<T> = result::Result<T, Error>;
 
 fn eval_item(item: TokenStream, resolved: &mut bool) -> Result<TokenStream> {
     let mut attr = false;
