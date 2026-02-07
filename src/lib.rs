@@ -36,6 +36,9 @@
 //! - **nightly** -
 //!   Provides [`#[attr_alias]`][macro@attr_alias].
 //!
+//!   Also makes use of the following feature flags:
+//!   - [proc\_macro\_tracked\_path]
+//!
 //! # Dependencies
 //!
 //! Although this is a proc\_macro crate, it does not depend on [proc\_macro2],
@@ -89,6 +92,7 @@
 //!
 //! [cfg\_aliases]: https://crates.io/crates/cfg_aliases
 //! [macro\_rules\_attribute]: https://crates.io/crates/macro_rules_attribute
+//! [proc\_macro\_tracked\_path]: https://doc.rust-lang.org/unstable-book/library-features/proc-macro-tracked-path.html
 //! [proc\_macro2]: https://crates.io/crates/proc_macro2
 //! [quote]: https://crates.io/crates/quote
 //! [syn]: https://crates.io/crates/syn
@@ -97,7 +101,7 @@
 // This is a private option that should not be used.
 // https://github.com/rust-lang/docs.rs/issues/147#issuecomment-389544407
 #![cfg_attr(feature = "nightly", feature(doc_cfg))]
-#![cfg_attr(feature = "nightly", feature(track_path))]
+#![cfg_attr(feature = "nightly", feature(proc_macro_tracked_path))]
 #![forbid(unsafe_code)]
 #![warn(unused_results)]
 
@@ -105,7 +109,7 @@ use std::error;
 use std::result;
 
 #[cfg(feature = "nightly")]
-use proc_macro::tracked_path;
+use proc_macro::tracked;
 use proc_macro::Delimiter;
 use proc_macro::Group;
 use proc_macro::Literal;
@@ -282,7 +286,7 @@ fn eval_item(item: TokenStream, resolved: &mut bool) -> Result<TokenStream> {
 #[cfg_attr(feature = "nightly", doc(cfg(feature = "nightly")))]
 #[proc_macro_attribute]
 pub fn attr_alias(args: TokenStream, item: TokenStream) -> TokenStream {
-    tracked_path::path(Aliases::FILE);
+    tracked::path(Aliases::FILE);
 
     Aliases::get()
         .and_then(|x| x.resolve_args(args))
